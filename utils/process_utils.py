@@ -28,19 +28,19 @@ class MetaballVis:
 
         # Initialize the metaball mesh
         assets_dir = os.path.join("assets", "metaball")
-        if not assets_dir.exists():
+        if not os.path.exists(assets_dir):
             raise FileNotFoundError(f"Assets directory {assets_dir} does not exist.")
         # Load the metaball mesh from files
-        surf_coor_path = os.path.join(assets_dir, "surf_coor.txt")
+        surf_coor_path = os.path.join(assets_dir, "surface_coordinate.txt")
         metaball_vertices = np.loadtxt(surf_coor_path, delimiter=",")
-        surf_tri_path = os.path.join(assets_dir, "surf_tri.txt")
+        surf_tri_path = os.path.join(assets_dir, "surface_triangle.txt")
         metaball_faces = np.loadtxt(surf_tri_path, delimiter=",").astype(int) - 1
         self.metaball_mesh = trimesh.Trimesh(
             vertices=metaball_vertices, faces=metaball_faces
         )
         self.metaball_node_num = len(self.metaball_mesh.vertices)
         self.metaball_def_node = np.loadtxt(
-            os.path.join(assets_dir, "def_node.txt"), dtype=int
+            os.path.join(assets_dir, "deform_node.txt"), dtype=int
         )
         self.metaball_colormap = [plt.get_cmap("viridis")(i / 255) for i in range(256)]
         self.metaball_cmin = 0.0

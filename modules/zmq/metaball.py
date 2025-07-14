@@ -53,10 +53,10 @@ class MetaballPublisher:
 
         # Read the protobuf definition for Metaball message
         with open(
-            pathlib.Path(__file__).parent / "protobuf/metaball_msg.proto",
+            pathlib.Path(__file__).parent.parent / "protobuf/metaball_msg.proto",
         ) as f:
             lines = f.read()
-        messages = re.search(r"message\s+Metaball\s*{{(.*?)}}", lines, re.DOTALL)
+        messages = re.search(r"message\s+Metaball\s*{(.*?)}", lines, re.DOTALL)
         body = messages.group(1)
         print("Message Metaball")
         print("{\n" + body + "\n}")
@@ -139,10 +139,10 @@ class MetaballSubscriber:
 
         # Read the protobuf definition for Metaball message
         with open(
-            pathlib.Path(__file__).parent / "protobuf/metaball_msg.proto",
+            pathlib.Path(__file__).parent.parent / "protobuf/metaball_msg.proto",
         ) as f:
             lines = f.read()
-        messages = re.search(r"message\s+Metaball\s*{{(.*?)}}", lines, re.DOTALL)
+        messages = re.search(r"message\s+Metaball\s*{(.*?)}", lines, re.DOTALL)
         body = messages.group(1)
         print("Message Metaball")
         print("{\n" + body + "\n}")
