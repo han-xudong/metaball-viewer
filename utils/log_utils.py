@@ -18,6 +18,34 @@ from rerun.blueprint import (
     Spatial2DView,
 )
 
+def log_asset(
+        log_path: str, 
+        file_path: str,
+        translation: np.ndarray = np.zeros(3),
+        mat3x3: np.ndarray = np.eye(3),
+        scale: float = 0.001,
+    ) -> None:
+    """
+    Log the asset, including .gltf, .glb, .obj, .stl, etc.
+    
+    Args:
+        log_path (str): Path to the log directory.
+        file_path (str): Path to the asset file.
+    """
+    
+    if file_path.endswith((".gltf", ".glb", ".obj", ".stl")):
+        rr.log(log_path, rr.Asset3D(path=file_path))
+        rr.log(
+            log_path, 
+            rr.Transform3D(
+                translation=translation,
+                mat3x3=mat3x3,
+                scale=scale,
+            )
+        )
+    else:
+        raise ValueError(f"Unsupported asset file type: {file_path}")
+
 def log_camera(imgs: dict) -> None:
     """
     Log the camera images.
@@ -58,13 +86,14 @@ def log_metaball(
     """
 
     node = np.zeros([metaball_node_num, 3])
+    def_node = def_node.reshape(-1, 3)
     if def_node.shape[0] == len(metaball_def_node):
-        node[metaball_def_node - 1] += def_node.reshape(-1, 3)
+        node[metaball_def_node - 1] += def_node
 
     rr.log(
         f"{name}/mesh",
         rr.Mesh3D(
-            vertex_positions=metaball_mesh.vertices + node,
+            vertex_positions=(metaball_mesh.vertices + node),
             triangle_indices=metaball_mesh.faces,
             vertex_colors=[
                 metaball_colormap[i]

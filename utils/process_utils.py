@@ -13,7 +13,7 @@ import rerun as rr
 from multiprocessing import Queue, Value
 from scipy.spatial.transform import Rotation as R
 from modules.zmq import MetaballSubscriber
-from .log_utils import log_camera, log_metaball, log_state_dict
+from .log_utils import log_camera, log_metaball, log_state_dict, log_asset
 from .data_utils import parse_data
 
 
@@ -27,24 +27,41 @@ class MetaballVis:
         self.log_time = 0.0
 
         # Initialize the metaball mesh
-        assets_dir = os.path.join("assets", "metaball")
-        if not os.path.exists(assets_dir):
-            raise FileNotFoundError(f"Assets directory {assets_dir} does not exist.")
+        assets_dir = os.path.join("assets")
+        metaball_mesh_dir = os.path.join(assets_dir, "metaball")
+        if not os.path.exists(metaball_mesh_dir):
+            raise FileNotFoundError(f"Assets directory {metaball_mesh_dir} does not exist.")
         # Load the metaball mesh from files
-        surf_coor_path = os.path.join(assets_dir, "surface_coordinate.txt")
+        surf_coor_path = os.path.join(metaball_mesh_dir, "surface_coordinate.txt")
         metaball_vertices = np.loadtxt(surf_coor_path, delimiter=",")
-        surf_tri_path = os.path.join(assets_dir, "surface_triangle.txt")
+        surf_tri_path = os.path.join(metaball_mesh_dir, "surface_triangle.txt")
         metaball_faces = np.loadtxt(surf_tri_path, delimiter=",").astype(int) - 1
         self.metaball_mesh = trimesh.Trimesh(
             vertices=metaball_vertices, faces=metaball_faces
         )
         self.metaball_node_num = len(self.metaball_mesh.vertices)
         self.metaball_def_node = np.loadtxt(
-            os.path.join(assets_dir, "deform_node.txt"), dtype=int
+            os.path.join(metaball_mesh_dir, "deform_node.txt"), dtype=int
         )
         self.metaball_colormap = [plt.get_cmap("viridis")(i / 255) for i in range(256)]
         self.metaball_cmin = 0.0
         self.metaball_cmax = 10.0
+        
+        # Log the metaball base
+        metaball_base_dir = os.path.join(assets_dir, "metaball_base")
+        if not os.path.exists(metaball_base_dir):
+            raise FileNotFoundError(f"Assets directory {metaball_base_dir} does not exist.")
+        log_asset(
+            log_path="metaball_base", 
+            file_path=os.path.join(metaball_base_dir, "metaball_base.obj"),
+            translation=np.array([0, 0, -30]),
+            mat3x3=np.array([
+                [-1, 0, 0],
+                [0, 0, 1],
+                [0, 1, 0],
+            ]),
+            scale=10.0,
+        )
 
         # Log the metaball mesh
         log_metaball(
@@ -100,7 +117,7 @@ class MetaballVis:
                     )
 
                     # Log the camera images
-                    self.log_camera(
+                    log_camera(
                         imgs={
                             "metaball": np.frombuffer(
                                 metaball_data["img"], dtype=np.uint8
@@ -109,7 +126,7 @@ class MetaballVis:
                     )
 
                     # Log the state dictionary
-                    self.log_state_dict(
+                    log_state_dict(
                         state_dict={
                             "metaball/pose": metaball_data["pose"],
                             "metaball/force": metaball_data["force"],

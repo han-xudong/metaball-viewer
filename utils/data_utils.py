@@ -22,10 +22,11 @@ def parse_data(magiclaw_msg) -> dict:
     """
     
     data = {
-        "pose": np.array(magiclaw_msg.pose),
-        "force": np.array(magiclaw_msg.force),
-        "node": np.array(magiclaw_msg.node),
-        "img": magiclaw_msg.img,
+        "img": magiclaw_msg[0],
+        "pose": np.array(magiclaw_msg[1]),
+        "force": np.array(magiclaw_msg[2]),
+        "node": np.array(magiclaw_msg[3]),
+        
     }
     
     return data
