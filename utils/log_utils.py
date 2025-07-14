@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+
+"""
+Utility functions for logging in the Metaball Viewer.
+"""
+
+import trimesh
+import numpy as np
+import rerun as rr
+from rerun.blueprint import (
+    Blueprint,
+    Horizontal,
+    Vertical,
+    Spatial3DView,
+    TimeSeriesView,
+    SelectionPanel,
+    TimePanel,
+    Spatial2DView,
+)
+
+def log_camera(imgs: dict) -> None:
+    """
+    Log the camera images.
+
+    Args:
+        imgs (dict): Dictionary of camera images.
+    """
+
+    for cam in imgs.keys():
+        img = imgs[cam]
+        if img is not None:
+            rr.log(
+                f"{cam}/camera/color",
+                rr.EncodedImage(contents=img, media_type="image/jpeg"),
+            )
+
+def log_metaball(
+    name: str,
+    def_node: np.ndarray,
+    metaball_mesh: trimesh.Trimesh,
+    metaball_node_num: int,
+    metaball_def_node: np.ndarray,
+    metaball_colormap: list[tuple[float, float, float, float]],
+    cmin: float = 0.0,
+    cmax: float = 12.0,
+) -> None:
+    """Log the metaball mesh.
+
+    Args:
+        name (str): Name of the metaball.
+        def_node (np.ndarray): Deform node positions.
+        metaball_mesh (trimesh.Trimesh): Metaball mesh.
+        metaball_node_num (int): Number of nodes in the metaball.
+        metaball_def_node (np.ndarray): Indices of the deform nodes.
+        metaball_colormap (list[tuple]): Colormap for the metaball.
+        cmin (float): Minimum value for colormap normalization. Default is 0.0.
+        cmax (float): Maximum value for colormap normalization. Default is 12.0.
+    """
+
+    node = np.zeros([metaball_node_num, 3])
+    if def_node.shape[0] == len(metaball_def_node):
+        node[metaball_def_node - 1] += def_node.reshape(-1, 3)
+
+    rr.log(
+        f"{name}/mesh",
+        rr.Mesh3D(
+            vertex_positions=metaball_mesh.vertices + node,
+            triangle_indices=metaball_mesh.faces,
+            vertex_colors=[
+                metaball_colormap[i]
+                for i in (
+                    (np.clip(np.linalg.norm(node, axis=1), cmin, cmax) - cmin)
+                    / (cmax - cmin)
+                    * (len(metaball_colormap) - 1)
+                )
+                .astype(int)
+                .tolist()
+            ],
+        ),
+    )
+
+def log_state_dict(state_dict: dict[str, np.ndarray]) -> None:
+    """
+    Log the state dictionary.
+
+    Args:
+        state_dict (dict): Dictionary of states.
+    """
+
+    # Log the state dictionary
+    for key, val in state_dict.items():
+        if type(val) is np.ndarray:
+            # Check if the array has a shape attribute and it's not empty
+            if hasattr(val, "shape") and len(val.shape) > 0:
+                # Log the vector
+                for i in range(val.shape[0]):
+                    rr.log(f"/{key}/{i}", rr.Scalar(val[i]))
+            else:
+                # Handle scalar numpy arrays
+                rr.log(f"/{key}", rr.Scalar(float(val)))
+        else:
+            # Log the scalar
+            rr.log(f"/{key}", rr.Scalar(float(val)))
+            
+def gen_blueprint() -> Blueprint:
+    """
+    Generate the blueprint for the viewer.
+    """
+
+    return Blueprint(
+        Horizontal(
+            Vertical(
+                Spatial3DView(name="3D Scene", origin="/", contents=["/**"]),
+                Spatial2DView(
+                    name="Metaball Camera",
+                    origin="/metaball/camera/color",
+                ),
+                row_shares=[2, 1],
+            ),
+            Horizontal(
+                Vertical(
+                    *(
+                        TimeSeriesView(origin=f"/metaball/pose/{i}")
+                        for i in range(6)
+                    ),
+                    name="pose",
+                ),
+                Vertical(
+                    *(
+                        TimeSeriesView(origin=f"/metaball/force/{i}")
+                        for i in range(6)
+                    ),
+                    name="force",
+                ),
+                column_shares=[1, 1],
+            ),
+            column_shares=[1, 1],
+        ),
+        SelectionPanel(state="hidden"),
+        TimePanel(state="collapsed"),
+    )
