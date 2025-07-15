@@ -26,12 +26,15 @@ class MetaballVis:
         # Initialize time tracking for logging
         self.log_time = 0.0
 
-        # Initialize the metaball mesh
+        # Define assets directory
         assets_dir = os.path.join("assets")
+
+        # Load the metaball mesh from files
         metaball_mesh_dir = os.path.join(assets_dir, "metaball")
         if not os.path.exists(metaball_mesh_dir):
-            raise FileNotFoundError(f"Assets directory {metaball_mesh_dir} does not exist.")
-        # Load the metaball mesh from files
+            raise FileNotFoundError(
+                f"Assets directory {metaball_mesh_dir} does not exist."
+            )
         surf_coor_path = os.path.join(metaball_mesh_dir, "surface_coordinate.txt")
         metaball_vertices = np.loadtxt(surf_coor_path, delimiter=",")
         surf_tri_path = os.path.join(metaball_mesh_dir, "surface_triangle.txt")
@@ -46,20 +49,24 @@ class MetaballVis:
         self.metaball_colormap = [plt.get_cmap("viridis")(i / 255) for i in range(256)]
         self.metaball_cmin = 0.0
         self.metaball_cmax = 10.0
-        
+
         # Log the metaball base
         metaball_base_dir = os.path.join(assets_dir, "metaball_base")
         if not os.path.exists(metaball_base_dir):
-            raise FileNotFoundError(f"Assets directory {metaball_base_dir} does not exist.")
+            raise FileNotFoundError(
+                f"Assets directory {metaball_base_dir} does not exist."
+            )
         log_asset(
-            log_path="metaball_base", 
+            log_path="metaball_base",
             file_path=os.path.join(metaball_base_dir, "metaball_base.obj"),
             translation=np.array([0, 0, -30]),
-            mat3x3=np.array([
-                [-1, 0, 0],
-                [0, 0, 1],
-                [0, 1, 0],
-            ]),
+            mat3x3=np.array(
+                [
+                    [-1, 0, 0],
+                    [0, 0, 1],
+                    [0, 1, 0],
+                ]
+            ),
             scale=10.0,
         )
 
@@ -240,12 +247,13 @@ def rerun_log(
 ) -> None:
     """
     Run the rerun log.
-    
+
     Args:
-        data: The data to be logged.
-        init_ready (Value): A multiprocessing Value to indicate that the rerun server is ready.
+        blueprint: The blueprint for the rerun log.
+        data (dict): The data to be logged.
+        init_ready (multiprocessing.Array): A multiprocessing Array to indicate that the rerun server is ready.
     """
-    
+
     # Initialize the rerun server
     rr.init("Metaball Viewer")
     rr.connect_tcp()
@@ -266,7 +274,8 @@ def rerun_log(
 
     # Log the data
     metaball_vis.log(data, start_time)
-    
+
+
 def zmq_subscriber(host: str, port: int, queue: Queue) -> None:
     """
     Start the ZMQ process.
@@ -276,7 +285,7 @@ def zmq_subscriber(host: str, port: int, queue: Queue) -> None:
         port (int): The port number for the ZMQ subscriber.
         queue (Queue): The queue to put the received data into.
     """
-    
+
     # Initialize the MetaballSubscriber
     subscriber = MetaballSubscriber(host, port)
 
@@ -290,7 +299,7 @@ def zmq_subscriber(host: str, port: int, queue: Queue) -> None:
 
             # Put the data into the queue
             queue.put(parse_data(metaball_msg))
-            
+
             count += 1
             if count == 60:
                 print(f"FPS: {60 / (time.time() - start):.2f}, Press Ctrl+C to exit.")

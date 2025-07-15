@@ -18,33 +18,35 @@ from rerun.blueprint import (
     Spatial2DView,
 )
 
+
 def log_asset(
-        log_path: str, 
-        file_path: str,
-        translation: np.ndarray = np.zeros(3),
-        mat3x3: np.ndarray = np.eye(3),
-        scale: float = 0.001,
-    ) -> None:
+    log_path: str,
+    file_path: str,
+    translation: np.ndarray = np.zeros(3),
+    mat3x3: np.ndarray = np.eye(3),
+    scale: float = 0.001,
+) -> None:
     """
     Log the asset, including .gltf, .glb, .obj, .stl, etc.
-    
+
     Args:
         log_path (str): Path to the log directory.
         file_path (str): Path to the asset file.
     """
-    
+
     if file_path.endswith((".gltf", ".glb", ".obj", ".stl")):
         rr.log(log_path, rr.Asset3D(path=file_path))
         rr.log(
-            log_path, 
+            log_path,
             rr.Transform3D(
                 translation=translation,
                 mat3x3=mat3x3,
                 scale=scale,
-            )
+            ),
         )
     else:
         raise ValueError(f"Unsupported asset file type: {file_path}")
+
 
 def log_camera(imgs: dict) -> None:
     """
@@ -62,6 +64,7 @@ def log_camera(imgs: dict) -> None:
                 rr.EncodedImage(contents=img, media_type="image/jpeg"),
             )
 
+
 def log_metaball(
     name: str,
     def_node: np.ndarray,
@@ -72,7 +75,8 @@ def log_metaball(
     cmin: float = 0.0,
     cmax: float = 12.0,
 ) -> None:
-    """Log the metaball mesh.
+    """
+    Log the metaball mesh.
 
     Args:
         name (str): Name of the metaball.
@@ -108,6 +112,7 @@ def log_metaball(
         ),
     )
 
+
 def log_state_dict(state_dict: dict[str, np.ndarray]) -> None:
     """
     Log the state dictionary.
@@ -130,10 +135,14 @@ def log_state_dict(state_dict: dict[str, np.ndarray]) -> None:
         else:
             # Log the scalar
             rr.log(f"/{key}", rr.Scalar(float(val)))
-            
+
+
 def gen_blueprint() -> Blueprint:
     """
     Generate the blueprint for the viewer.
+
+    Returns:
+        blueprint (Blueprint): The generated blueprint for the viewer.
     """
 
     return Blueprint(
@@ -148,17 +157,11 @@ def gen_blueprint() -> Blueprint:
             ),
             Horizontal(
                 Vertical(
-                    *(
-                        TimeSeriesView(origin=f"/metaball/pose/{i}")
-                        for i in range(6)
-                    ),
+                    *(TimeSeriesView(origin=f"/metaball/pose/{i}") for i in range(6)),
                     name="pose",
                 ),
                 Vertical(
-                    *(
-                        TimeSeriesView(origin=f"/metaball/force/{i}")
-                        for i in range(6)
-                    ),
+                    *(TimeSeriesView(origin=f"/metaball/force/{i}") for i in range(6)),
                     name="force",
                 ),
                 column_shares=[1, 1],

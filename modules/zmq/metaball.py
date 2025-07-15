@@ -96,7 +96,7 @@ class MetaballPublisher:
         """
         Close ZMQ socket and context to prevent memory leaks.
         """
-        
+
         if hasattr(self, "publisher") and self.publisher:
             self.publisher.close()
         if hasattr(self, "context") and self.context:
@@ -181,7 +181,7 @@ class MetaballSubscriber:
         """
         Close ZMQ socket and context to prevent memory leaks.
         """
-        
+
         if hasattr(self, "subscriber") and self.subscriber:
             self.subscriber.close()
         if hasattr(self, "context") and self.context:

@@ -45,7 +45,6 @@ import argparse
 import time
 import yaml
 from pynput import keyboard
-import multiprocessing
 from multiprocessing import Process, Queue, Array, Value
 import rerun as rr
 from utils.log_utils import gen_blueprint
@@ -193,7 +192,7 @@ def main(
 
 
 if __name__ == "__main__":
-
+    # Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-m", "--mode", default="live", type=str, help="set the mode of interface"
@@ -201,7 +200,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "-d", "--data_path", required=False, type=str, help="select the data to replay"
     )
-
     args = parser.parse_args()
 
     main(mode=args.mode, data_path=args.data_path)
