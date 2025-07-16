@@ -33,8 +33,8 @@ class MetaballPublisher:
         Args:
             host (str): The host address of the publisher.
             port (int): The port number of the publisher.
-            hwm (int): High water mark for the publisher socket. Default is 1.
-            conflate (bool): Whether to conflate messages. Default is True.
+            hwm (int, optional): High water mark for the publisher socket. Default is 1.
+            conflate (bool, optional): Whether to conflate messages. Default is True.
         """
 
         print("{:-^80}".format(" Metaball Publisher Initialization "))
@@ -104,6 +104,16 @@ class MetaballPublisher:
 
 
 class MetaballSubscriber:
+    """
+    MetaballSubscriber class.
+
+    This class is used to subscribe to Metaball messages using ZeroMQ.
+
+    Attributes:
+        context (zmq.Context): The ZMQ context for the subscriber.
+        subscriber (zmq.Socket): The ZMQ subscriber socket.
+    """
+
     def __init__(
         self,
         host: str,
@@ -117,8 +127,8 @@ class MetaballSubscriber:
         Args:
             host (str): The host address of the subscriber.
             port (int): The port number of the subscriber.
-            hwm (int): High water mark for the subscriber socket. Default is 1.
-            conflate (bool): Whether to conflate messages. Default is True.
+            hwm (int, optional): High water mark for the subscriber socket. Default is 1.
+            conflate (bool, optional): Whether to conflate messages. Default is True.
         """
 
         print("{:-^80}".format(" Metaball Subscriber Initialization "))
@@ -154,25 +164,18 @@ class MetaballSubscriber:
         """
         Subscribe the message.
 
-        Args:
-            timeout: Maximum time to wait for a message in milliseconds.
-                    Default is 1000ms (1 second).
-
         Returns:
             data (tuple): metaball data.
                 - img (bytes): The image captured by the camera.
                 - pose (list): The pose of the marker.
                 - force (list): The force on the bottom surface of the metaball.
                 - node (list): The node displacement of the metaball.
-
-
-        Raises:
-            zmq.ZMQError: If no message is received within the timeout period.
         """
 
         # Receive the message
         metaball = metaball_msg_pb2.Metaball()
         metaball.ParseFromString(self.subscriber.recv())
+
         return (
             metaball.img,
             metaball.pose,

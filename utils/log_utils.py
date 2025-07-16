@@ -32,9 +32,9 @@ def log_asset(
     Args:
         log_path (str): Path to the log directory.
         file_path (str): Path to the asset file.
-        translation (numpy.ndarray): Translation vector for the asset. Default is a zero vector.
-        mat3x3 (numpy.ndarray): 3x3 rotation matrix for the asset. Default is an identity matrix.
-        scale (float): Scale factor for the asset. Default is 0.001.
+        translation (numpy.ndarray, optional): Translation vector for the asset. Default is a zero vector.
+        mat3x3 (numpy.ndarray, optional): 3x3 rotation matrix for the asset. Default is an identity matrix.
+        scale (float, optional): Scale factor for the asset. Default is 0.001.
     """
 
     if file_path.endswith((".gltf", ".glb", ".obj", ".stl")):
@@ -88,8 +88,8 @@ def log_metaball(
         metaball_node_num (int): Number of nodes in the metaball.
         metaball_def_node (numpy.ndarray): Indices of the deform nodes.
         metaball_colormap (list[tuple[float, float, float, float]]): Colormap for the metaball.
-        cmin (float): Minimum value for colormap normalization. Default is 0.0.
-        cmax (float): Maximum value for colormap normalization. Default is 12.0.
+        cmin (float, optional): Minimum value for colormap normalization. Default is 0.0.
+        cmax (float, optional): Maximum value for colormap normalization. Default is 12.0.
     """
 
     node = np.zeros([metaball_node_num, 3])
