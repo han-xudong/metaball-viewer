@@ -7,9 +7,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-black?logo=open-source-initiative&logoColor=white" /></a>
 </p>
 
-This is a viewer example for the [Metaball](https://github.com/han-xudong/metaball). The viewer visualizes streams of multimodal data, including 3D scene of mesh, captured image, detected pose of marker, and estimated force.
+This is a viewer example for the [MetaBall](https://github.com/han-xudong/metaball). The viewer visualizes streams of multimodal data, including 3D scene of mesh, captured image, detected pose of marker, and estimated force.
 
-![Metaball Viewer](docs/assets/screenshot.jpg)
+![MetaBall Viewer](docs/assets/screenshot.jpg)
 
 ## 🚀 Quick Start
 
@@ -21,13 +21,13 @@ cd metaball-viewer
 pip install -r requirements.txt
 ```
 
-Note that the address of the Meta-Finger should be first set in `configs/viewer.yaml`, same as the address in the Meta-Finger. Then run the viewer:
+Note that the address of the MetaBall should be first set in `configs/viewer.yaml`. Then run the viewer:
 
 ```bash
 python viewer.py
 ```
 
-When the data of the metaball is available, the viewer will show the streams of the data.
+When the data of the MetaBall is available, the viewer will show the streams of the data.
 
 ## 📄 License
 
