@@ -11,13 +11,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rerun as rr
 from multiprocessing import Queue, Value
-from scipy.spatial.transform import Rotation as R
 from modules.zmq import MetaballSubscriber
 from .log_utils import log_camera, log_metaball, log_state_dict, log_asset
 from .data_utils import parse_data
 
 
 class MetaballVis:
+    """
+    MetaballVis class.
+    
+    This class is responsible for visualizing the Metaball in live or replay mode.
+    It initializes the Metaball mesh and logs the data received from the ZMQ subscriber.
+    
+    Attributes:
+        log_time (float): Time tracking for logging.
+        metaball_mesh (trimesh.Trimesh): The 3D mesh of the metaball.
+        metaball_node_num (int): Number of nodes in the metaball mesh.
+        metaball_def_node (numpy.ndarray): The deformable nodes of the metaball.
+        metaball_colormap (list[tuple[float, float, float, float]]): Colormap for the metaball.
+        metaball_cmin (float): Minimum value for colormap normalization.
+        metaball_cmax (float): Maximum value for colormap normalization.
+    """
+    
     def __init__(self) -> None:
         """
         Initialize the MetaballVis class.
@@ -93,10 +108,10 @@ class MetaballVis:
         Run the viewer in live mode.
 
         Args:
-            zmq_queue (Queue): The queue for receiving the data.
-            recording_queue (Queue): The queue for recording the data.
-            is_recording (Value): A multiprocessing Value indicating whether recording is active.
-            start_time (Value): A multiprocessing Value to store the start time of the recording.
+            zmq_queue (multiprocessing.Queue): The queue for receiving the data.
+            recording_queue (multiprocessing.Queue): The queue for recording the data.
+            is_recording (multiprocessing.Value): A multiprocessing Value indicating whether recording is active.
+            start_time (multiprocessing.Value): A multiprocessing Value to store the start time of the recording.
 
         Raises:
             KeyboardInterrupt: If Ctrl+C is pressed, the viewer will terminate.
@@ -164,8 +179,8 @@ class MetaballVis:
         Log the data for the replay mode.
 
         Args:
-            data: The data to be logged.
-            start_time (Value): A multiprocessing Value to store the start time of the recording.
+            data (dict): The data to be logged.
+            start_time (multiprocessing.Value): A multiprocessing Value to store the start time of the recording.
         """
 
         # Log the data from the replay mode
@@ -220,11 +235,11 @@ def rerun_server(
     Run the rerun server.
 
     Args:
-        blueprint: The blueprint for the rerun server.
-        zmq_queue (Queue): The queue for receiving the data.
-        recording_queue (Queue): The queue for recording the data.
-        is_recording (Value): A multiprocessing Value indicating whether recording is active.
-        start_time (Value): A multiprocessing Value to store the start time of the recording.
+        blueprint (rerun.blueprint.Blueprint): The blueprint for the rerun server.
+        zmq_queue (multiprocessing.Queue): The queue for receiving the data.
+        recording_queue (multiprocessing.Queue): The queue for recording the data.
+        is_recording (multiprocessing.Value): A multiprocessing Value indicating whether recording is active.
+        start_time (multiprocessing.Value): A multiprocessing Value to store the start time of the recording.
     """
 
     # Initialize the rerun server
@@ -249,7 +264,7 @@ def rerun_log(
     Run the rerun log.
 
     Args:
-        blueprint: The blueprint for the rerun log.
+        blueprint (rerun.blueprint.Blueprint): The blueprint for the rerun log.
         data (dict): The data to be logged.
         init_ready (multiprocessing.Array): A multiprocessing Array to indicate that the rerun server is ready.
     """
@@ -283,7 +298,7 @@ def zmq_subscriber(host: str, port: int, queue: Queue) -> None:
     Args:
         host (str): The host address for the ZMQ subscriber.
         port (int): The port number for the ZMQ subscriber.
-        queue (Queue): The queue to put the received data into.
+        queue (multiprocessing.Queue): The queue to put the received data into.
     """
 
     # Initialize the MetaballSubscriber

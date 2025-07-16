@@ -32,6 +32,9 @@ def log_asset(
     Args:
         log_path (str): Path to the log directory.
         file_path (str): Path to the asset file.
+        translation (numpy.ndarray): Translation vector for the asset. Default is a zero vector.
+        mat3x3 (numpy.ndarray): 3x3 rotation matrix for the asset. Default is an identity matrix.
+        scale (float): Scale factor for the asset. Default is 0.001.
     """
 
     if file_path.endswith((".gltf", ".glb", ".obj", ".stl")):
@@ -80,11 +83,11 @@ def log_metaball(
 
     Args:
         name (str): Name of the metaball.
-        def_node (np.ndarray): Deform node positions.
+        def_node (numpy.ndarray): Deform node positions.
         metaball_mesh (trimesh.Trimesh): Metaball mesh.
         metaball_node_num (int): Number of nodes in the metaball.
-        metaball_def_node (np.ndarray): Indices of the deform nodes.
-        metaball_colormap (list[tuple]): Colormap for the metaball.
+        metaball_def_node (numpy.ndarray): Indices of the deform nodes.
+        metaball_colormap (list[tuple[float, float, float, float]]): Colormap for the metaball.
         cmin (float): Minimum value for colormap normalization. Default is 0.0.
         cmax (float): Maximum value for colormap normalization. Default is 12.0.
     """
@@ -118,7 +121,7 @@ def log_state_dict(state_dict: dict[str, np.ndarray]) -> None:
     Log the state dictionary.
 
     Args:
-        state_dict (dict): Dictionary of states.
+        state_dict (dict[str, numpy.ndarray]): Dictionary of states.
     """
 
     # Log the state dictionary
@@ -142,7 +145,7 @@ def gen_blueprint() -> Blueprint:
     Generate the blueprint for the viewer.
 
     Returns:
-        blueprint (Blueprint): The generated blueprint for the viewer.
+        blueprint (rerun.blueprint.Blueprint): The generated blueprint for the viewer.
     """
 
     return Blueprint(

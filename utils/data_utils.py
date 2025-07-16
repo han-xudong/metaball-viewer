@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
 
+"""
+Utility functions for data handling in the Metaball Viewer.
+"""
+
 import os
-import numpy as np
 import h5py
+import numpy as np
 from tqdm import tqdm
 
 
-def parse_data(magiclaw_msg) -> dict:
+def parse_data(magiclaw_msg: tuple) -> dict:
     """
     Parse the Metaball message and return a dictionary of data.
 
     Args:
-        magiclaw_msg: The Metaball message to parse.
+        magiclaw_msg (tuple): The Metaball message to parse.
 
     Returns:
         data (dict): A dictionary containing the parsed data.
-            - pose (np.ndarray): The pose of the metaball.
-            - force (np.ndarray): The force applied to the metaball.
-            - node (np.ndarray): The metaball mesh data.
+            - pose (numpy.ndarray): The pose of the metaball.
+            - force (numpy.ndarray): The force applied to the metaball.
+            - node (numpy.ndarray): The metaball mesh data.
             - img (bytes): The image captured by the camera.
     """
 
@@ -94,7 +98,12 @@ def load_data(file_path: str) -> dict:
         file_path (str): The path to the HDF5 file.
 
     Returns:
-        Dict: The loaded data.
+        data (dict): A dictionary containing the loaded data.
+            - time (numpy.ndarray): The time data.
+            - pose (numpy.ndarray): The pose data.
+            - force (numpy.ndarray): The force data.
+            - node (numpy.ndarray): The metaball mesh data.
+            - img (list): The images captured by the camera.
     """
 
     # Check if the file exists

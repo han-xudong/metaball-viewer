@@ -44,9 +44,9 @@ import os
 import argparse
 import time
 import yaml
+import rerun as rr
 from pynput import keyboard
 from multiprocessing import Process, Queue, Array, Value
-import rerun as rr
 from utils.log_utils import gen_blueprint
 from utils.process_utils import rerun_server, rerun_log, zmq_subscriber
 from utils.event_utils import KeyHandler

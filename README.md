@@ -11,15 +11,22 @@ This is a viewer example for the [MetaBall](https://github.com/han-xudong/metaba
 
 ![MetaBall Viewer](docs/assets/screenshot.jpg)
 
-## 🚀 Quick Start
+## 📦 Installation
 
-Clone the latest repository and install the dependencies:
+Clone the latest repository:
 
 ```bash
 git clone https://github.com/han-xudong/metaball-viewer.git
+```
+
+It's recommended to create a `conda` environment for this project. Then install the packages:
+
+```bash
 cd metaball-viewer
 pip install -r requirements.txt
 ```
+
+## 🚀 Quick Start
 
 Note that the address of the MetaBall should be first set in `configs/viewer.yaml`. Then run the viewer:
 
