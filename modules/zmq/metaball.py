@@ -66,7 +66,7 @@ class MetaballPublisher:
 
     def pubishMessage(
         self,
-        img_bytes: bytes = b"",
+        img: bytes = b"",
         pose: list = np.zeros(6, dtype=np.float32).tolist(),
         force: list = np.zeros(6, dtype=np.float32).tolist(),
         node: list = np.zeros(6, dtype=np.float32).tolist(),
@@ -75,19 +75,19 @@ class MetaballPublisher:
         Publish the message.
 
         Args:
-            img: The image captured by the camera.
-            pose: The pose of the marker (numpy array or list).
-            force: The force on the bottom surface of the metaball (numpy array or list).
-            node: The node displacement of the metaball (numpy array or list).
+            img (bytes): The image captured by the camera.
+            pose (list): The pose of the marker.
+            force (list): The force on the bottom surface of the metaball.
+            node (list): The node displacement of the metaball.
         """
 
         # Set the message
         metaball = metaball_msg_pb2.Metaball()
         metaball.timestamp = datetime.now().timestamp()
-        metaball.img = img_bytes
-        metaball.pose[:] = pose.flatten().tolist()
-        metaball.force[:] = force.flatten().tolist()
-        metaball.node[:] = node.flatten().tolist()
+        metaball.img = img
+        metaball.pose[:] = pose
+        metaball.force[:] = force
+        metaball.node[:] = node
 
         # Publish the message
         self.publisher.send(metaball.SerializeToString())
@@ -151,17 +151,20 @@ class MetaballSubscriber:
         print("{:-^80}".format(""))
 
     def subscribeMessage(self) -> Tuple[bytes, list, list, list]:
-        """Subscribe the message.
+        """
+        Subscribe the message.
 
         Args:
             timeout: Maximum time to wait for a message in milliseconds.
                     Default is 1000ms (1 second).
 
         Returns:
-            img: The image captured by the camera.
-            pose: The pose of the marker.
-            force: The force on the bottom surface of the metaball.
-            node: The node displacement of the metaball.
+            data (tuple): metaball data.
+                - img (bytes): The image captured by the camera.
+                - pose (list): The pose of the marker.
+                - force (list): The force on the bottom surface of the metaball.
+                - node (list): The node displacement of the metaball.
+
 
         Raises:
             zmq.ZMQError: If no message is received within the timeout period.
