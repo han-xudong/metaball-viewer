@@ -178,3 +178,6 @@ data/
 
 # protobuf files
 *_pb2.py
+
+# uv
+uv.lock
