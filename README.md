@@ -31,7 +31,7 @@ uv pip install -e .
 Run the viewer with the following command:
 
 ```bash
-uv run metaball-viewer
+uv run metaball-viewer [options]
 ```
 
 Various configuration options are available:
