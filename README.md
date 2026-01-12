@@ -19,20 +19,29 @@ Clone the latest repository:
 git clone https://github.com/han-xudong/metaball-viewer.git
 ```
 
-It's recommended to create a `conda` environment for this project. Then install the packages:
+We use `uv` to manage Python dependencies. See [uv documentation](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions. Once `uv` is installed, run the following command to set up the environment:
 
 ```bash
-cd metaball-viewer
-pip install -r requirements.txt
+uv sync
+uv pip install -e .
 ```
 
 ## 🚀 Quick Start
 
-Note that the address of the MetaBall should be first set in `configs/viewer.yaml`. Then run the viewer:
+Run the viewer with the following command:
 
 ```bash
-python viewer.py
+uv run metaball-viewer
 ```
+
+Various configuration options are available:
+
+| Options       | Description                                   | Type   | Default      |
+|---------------|-----------------------------------------------|--------|--------------|
+| --mode        | Viewer mode: 'live' or 'replay'.              | str    | live         |
+| --host        | Host address for the ZMQ subscriber.          | str    | 127.0.0.1    |
+| --port        | Port number for the ZMQ subscriber.           | int    | 6666         |
+| --data-path   | Path to the data folder for replay mode.      | str    | None         |
 
 When the data of the MetaBall is available, the viewer will show the streams of the data.
 

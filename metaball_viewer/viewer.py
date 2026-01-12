@@ -2,23 +2,6 @@
 
 """
 Metaball Viewer
-==========
-
-This repository is to visualize the Metaball in live (default) or replay mode.
-
-To run the viewer in live mode:
-
-```bash
-python viewer.py -m live
-```
-
-To run the viewer in replay mode:
-
-```bash
-python viewer.py -m replay -d folder_path
-```
-
-where `folder_path` is the path of the folder which contains all above data.
 
 During the live mode, the viewer will receive the data from the phone through ZMQ.
 Press "Ctrl+C" to exit the viewer.
@@ -42,7 +25,6 @@ The blueprint of the viewer is defined in the `blueprint` method, which includes
 import sys
 import os
 import time
-import yaml
 import rerun as rr
 from pynput import keyboard
 from multiprocessing import Process, Queue, Array, Value
