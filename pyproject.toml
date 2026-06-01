@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "metaball-viewer"
 version = "0.1.0"
-description = "Meta Ball viewer"
+description = "MetaBall viewer"
 authors = [
     {name = "Xudong Han", email = "12231112@mail.sustech.edu.cn"}
 ]
